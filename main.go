@@ -14,6 +14,7 @@ func main() {
 	if err != nil {
 		log.Fatalln("main: failed to exit successfully, err =", err)
 	}
+	
 }
 
 func realMain() error {
@@ -51,6 +52,9 @@ func realMain() error {
 	mux := router.NewRouter(todoDB)
 
 	// TODO: サーバーをlistenする
+	ListenAndServe(port,mux)
 
 	return nil
 }
+
+
