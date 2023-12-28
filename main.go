@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 	"time"
+	"fmt"
+	"net/http"
 
 	"github.com/TechBowl-japan/go-stations/db"
 	"github.com/TechBowl-japan/go-stations/handler/router"
