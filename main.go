@@ -2,10 +2,9 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 	"time"
-	"fmt"
-	"net/http"
 
 	"github.com/TechBowl-japan/go-stations/db"
 	"github.com/TechBowl-japan/go-stations/handler/router"
@@ -16,7 +15,7 @@ func main() {
 	if err != nil {
 		log.Fatalln("main: failed to exit successfully, err =", err)
 	}
-	
+
 }
 
 func realMain() error {
@@ -54,9 +53,7 @@ func realMain() error {
 	mux := router.NewRouter(todoDB)
 
 	// TODO: サーバーをlistenする
-	http.ListenAndServe(port,mux)
+	http.ListenAndServe(port, mux)
 
 	return nil
 }
-
-
