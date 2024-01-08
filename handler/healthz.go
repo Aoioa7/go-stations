@@ -23,4 +23,6 @@ func (h *HealthzHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(p)
 
+	//ここにエラーメッセージうつす
+
 }
