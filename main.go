@@ -15,10 +15,7 @@ func main() {
 	if err != nil {
 		log.Fatalln("main: failed to exit successfully, err =", err)
 	}
-	//追加しない、修正しろ
-	if err != nil {
-		log.Println("error")
-	}
+	
 }
 
 func realMain() error {
