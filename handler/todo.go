@@ -51,7 +51,7 @@ func(h *TODOHandler) ServeHTTP(w http.ResponseWriter,r *http.Request){
 	switch r.Method{
 	case "POST":
 		req:= &model.CreateTODORequest{}
-		err1:=json.NewDecoder(r.Body).Decode(req)
+		err1:=json.NewDecoder(r.Body).Decode(&req)
 		if err1!=nil{
 			log.Println(err1)
 			return
@@ -73,7 +73,7 @@ func(h *TODOHandler) ServeHTTP(w http.ResponseWriter,r *http.Request){
 
 	case "Put":
 		req:=&model.UpdateTODORequest{}
-		err1:=json.NewDecoder(r.Body).Decode(req)
+		err1:=json.NewDecoder(r.Body).Decode(&req)
 		if err1!=nil{
 			log.Println(err1)
 			return
