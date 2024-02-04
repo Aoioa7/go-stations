@@ -51,42 +51,49 @@ func(h *TODOHandler) ServeHTTP(w http.ResponseWriter,r *http.Request){
 	switch r.Method{
 	case "POST":
 		req:= &model.CreateTODORequest{}
-		err:=json.NewDecoder(r.Body).Decode(req)
-		if err!=nil{
-			log.Println(err)
+		err1:=json.NewDecoder(r.Body).Decode(req)
+		if err1!=nil{
+			log.Println(err1)
+			return
 		}
 		if len(req.Subject)==0{
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		res,err:= h.Create(r.Context(), req)
-		if err !=nil{
+		res,err2:= h.Create(r.Context(), req)
+		if err2 !=nil{
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		json.NewEncoder(w).Encode(res)
+		
+		err3:=json.NewEncoder(w).Encode(res)
+		if err3!=nil{
+			println(err3)
+		}
 
 	case "Put":
 		req:=&model.UpdateTODORequest{}
-		err:=json.NewDecoder(r.Body).Decode(req)
-		if err!=nil{
-			log.Println(err)
-		}
-		if req.Subject==""{
-			w.WriteHeader(http.StatusBadRequest)
+		err1:=json.NewDecoder(r.Body).Decode(req)
+		if err1!=nil{
+			log.Println(err1)
 			return
 		}
-		if req.ID==0{
+
+		if len(req.Subject)==0||req.ID==0{
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		res,err:=h.Update(r.Context(),req)
-		if err!=nil{
+		res,err2:=h.Update(r.Context(),req)
+		if err2!=nil{
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
-		json.NewEncoder(w).Encode(res)
+		
+		err3:=json.NewEncoder(w).Encode(res)
+		if err3!=nil{
+			log.Println(err3)
+		}
 
 	}
 }
