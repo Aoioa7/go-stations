@@ -71,13 +71,16 @@ func(h *TODOHandler) ServeHTTP(w http.ResponseWriter,r *http.Request){
 		err:=json.NewDecoder(r.Body).Decode(req)
 		if err!=nil{
 			log.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
 		}
-		if len(req.Subject)==0||req.ID==0{
+		if len(req.Subject)==0{
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
+		if req.ID==0{
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		
 		res,err:=h.Update(r.Context(),req)
 		if err!=nil{
 			w.WriteHeader(http.StatusNotFound)
