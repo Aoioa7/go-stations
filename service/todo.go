@@ -79,26 +79,17 @@ func (s *TODOService) UpdateTODO(ctx context.Context, id int64, subject, descrip
 		return nil,err
 	}
 	defer stmt.Close()
-
-	res,err :=stmt.ExecContext(ctx,subject,description,id)
-	if err!=nil{
-		return nil,err
-	}
-	rowID,err :=res.RowsAffected()
-	if err!=nil{
-		return nil,err
-	}
-	if rowID==0{
-		return nil,&model.ErrNotFound{}
+    _,err1 :=stmt.ExecContext(ctx,subject,description,id)
+	if err1!=nil{
+		return nil,err1
 	}
 
 	todo:=model.TODO{ID:id}
 	row:=s.db.QueryRowContext(ctx,confirm,id)
-	err =row.Scan(&todo.Subject,&todo.Description,&todo.CreatedAt,&todo.UpdatedAt)
-	if err!=nil{
-		return nil,err
+	err2:=row.Scan(&todo.Subject,&todo.Description,&todo.CreatedAt,&todo.UpdatedAt)
+	if err2!=nil{
+		return nil,err2
 	}
-	
 	return &todo, nil
 }
 
