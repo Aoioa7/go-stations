@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"database/sql"
-	"time"
 
 	"github.com/TechBowl-japan/go-stations/model"
 )
@@ -74,13 +73,7 @@ func (s *TODOService) UpdateTODO(ctx context.Context, id int64, subject, descrip
 		update  = `UPDATE todos SET subject = ?, description = ? WHERE id = ?`
 		confirm = `SELECT subject, description, created_at, updated_at FROM todos WHERE id = ?`
 	)
-	todo:=model.TODO{
-		ID: id,
-		Subject: subject,
-		Description: description,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-	}
+	
 	stmt,err:= s.db.PrepareContext(ctx,update)
 	if err!=nil{
 		return nil,err
@@ -99,6 +92,7 @@ func (s *TODOService) UpdateTODO(ctx context.Context, id int64, subject, descrip
 		return nil,&model.ErrNotFound{}
 	}
 
+	todo:=model.TODO{ID:id}
 	row:=s.db.QueryRowContext(ctx,confirm,id)
 	err =row.Scan(&todo.Subject,&todo.Description,&todo.CreatedAt,&todo.UpdatedAt)
 	if err!=nil{
