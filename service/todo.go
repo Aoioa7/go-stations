@@ -58,9 +58,8 @@ func (s *TODOService) ReadTODO(ctx context.Context, prevID, size int64) ([]*mode
 		read       = `SELECT id, subject, description, created_at, updated_at FROM todos ORDER BY id DESC LIMIT ?`
 		readWithID = `SELECT id, subject, description, created_at, updated_at FROM todos WHERE id < ? ORDER BY id DESC LIMIT ?`
 	)
-	defaultSize:=int64(5)
 	if size==0{
-		size=defaultSize
+		size=5
 	}
 	todos:=[]*model.TODO{}
 
