@@ -25,11 +25,6 @@ func (s *TODOService) CreateTODO(ctx context.Context, subject, description strin
 		insert  = `INSERT INTO todos(subject, description) VALUES(?, ?)`
 		confirm = `SELECT subject, description, created_at, updated_at FROM todos WHERE id = ?`
 	)
-	
-	todo:=model.TODO{
-		Subject: subject,
-		Description: description,
-	}
 
 	stmt,err := s.db.PrepareContext(ctx,insert)
 	if err!=nil{
@@ -48,7 +43,7 @@ func (s *TODOService) CreateTODO(ctx context.Context, subject, description strin
 	}
 
 	row:=s.db.QueryRowContext(ctx,confirm,id)
-	todo.ID=id
+	todo:=model.TODO{ID:int64(id)}
 	if err:=row.Scan(&todo.Subject,&todo.Description,&todo.CreatedAt,&todo.UpdatedAt);
 	err!=nil{
 		return nil,err
@@ -79,16 +74,22 @@ func (s *TODOService) UpdateTODO(ctx context.Context, id int64, subject, descrip
 		return nil,err
 	}
 	defer stmt.Close()
-    _,err1 :=stmt.ExecContext(ctx,subject,description,id)
-	if err1!=nil{
-		return nil,err1
+    res,err :=stmt.ExecContext(ctx,subject,description,id)
+	if err!=nil{
+		return nil,err
 	}
-
-	todo:=model.TODO{ID:id}
+	changed,err:=res.RowsAffected()
+	if err!=nil{
+		return nil,err
+	}
+	if changed==0{
+		return nil,&model.ErrNotFound{}
+	}
 	row:=s.db.QueryRowContext(ctx,confirm,id)
-	err2:=row.Scan(&todo.Subject,&todo.Description,&todo.CreatedAt,&todo.UpdatedAt)
-	if err2!=nil{
-		return nil,err2
+	todo:=model.TODO{ID:int64(id)}
+	if err:=row.Scan(&todo.Subject,&todo.Description,&todo.CreatedAt,&todo.UpdatedAt);
+	err!=nil{
+		return nil,err
 	}
 	return &todo, nil
 }

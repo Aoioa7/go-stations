@@ -51,31 +51,35 @@ func(h *TODOHandler) ServeHTTP(w http.ResponseWriter,r *http.Request){
 	switch r.Method{
 	case "POST":
 		req:= &model.CreateTODORequest{}
-		err1:=json.NewDecoder(r.Body).Decode(req)
-		if err1!=nil{
-			log.Println(err1)
+		if err:=json.NewDecoder(r.Body).Decode(req);
+		err!=nil{
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		if len(req.Subject)==0{
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		res,err2:= h.Create(r.Context(), req)
-		if err2 !=nil{
+		res,err:= h.Create(r.Context(), req)
+		if err!=nil{
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		
-		err3:=json.NewEncoder(w).Encode(res)
-		if err3!=nil{
-			println(err3)
+		w.Header().Set("Content-Type","application/json")
+		w.WriteHeader(http.StatusOK)
+		if err:=json.NewEncoder(w).Encode(res);
+		err!=nil{
+			w.WriteHeader(http.StatusInternalServerError)
+			return
 		}
 
-	case "Put":
+	case "PUT":
 		req:=&model.UpdateTODORequest{}
-		err1:=json.NewDecoder(r.Body).Decode(req)
-		if err1!=nil{
-			log.Println(err1)
+		err:=json.NewDecoder(r.Body).Decode(req)
+		if err!=nil{
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -84,15 +88,16 @@ func(h *TODOHandler) ServeHTTP(w http.ResponseWriter,r *http.Request){
 			return
 		}
 
-		res,err2:=h.Update(r.Context(),req)
-		if err2!=nil{
+		res,err:=h.Update(r.Context(),req)
+		if err!=nil{
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
-		
-		err3:=json.NewEncoder(w).Encode(res)
-		if err3!=nil{
-			log.Println(err3)
+		w.Header().Set("Content-Type","application/json")
+		if err:=json.NewEncoder(w).Encode(res);
+		err!=nil{
+			w.WriteHeader(http.StatusInternalServerError)
+			return
 		}
 
 	}
