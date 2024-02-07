@@ -65,17 +65,19 @@ func (s *TODOService) ReadTODO(ctx context.Context, prevID, size int64) ([]*mode
 	todos:=[]*model.TODO{}
 
 	if prevID==0{
-		row,err:=s.db.QueryContext(ctx,read,size)
+		rows,err:=s.db.QueryContext(ctx,read,size)
 		if err!=nil{
 			return nil,err
 		}
-		defer row.Close()
-		var todo model.TODO
-		if err:=row.Scan(&todo.ID,&todo.Subject,&todo.Description,&todo.CreatedAt,&todo.UpdatedAt);
-		err!=nil{
-			return nil,err
+		defer rows.Close()
+		for rows.Next(){
+			var todo model.TODO
+			if err:=rows.Scan(&todo.ID,&todo.Subject,&todo.Description,&todo.CreatedAt,&todo.UpdatedAt);
+			err!=nil{
+				return nil,err
 		}
 		todos=append(todos,&todo)
+	    }
 	}else{
 		rows,err:=s.db.QueryContext(ctx,readWithID,prevID,size)
 		if err!=nil{
