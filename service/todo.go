@@ -76,6 +76,7 @@ func (s *TODOService) ReadTODO(ctx context.Context, prevID, size int64) ([]*mode
 				return nil,err
 		}
 		todos=append(todos,&todo)
+
 	    }
 	}else{
 		rows,err:=s.db.QueryContext(ctx,readWithID,prevID,size)
@@ -92,7 +93,7 @@ func (s *TODOService) ReadTODO(ctx context.Context, prevID, size int64) ([]*mode
 		    todos=append(todos,&todo)
 		}
 	}
-	return todos, nil
+	return todos,nil
 }
 
 // UpdateTODO updates the TODO on DB.
