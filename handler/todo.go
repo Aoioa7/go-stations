@@ -55,24 +55,28 @@ func(h *TODOHandler) ServeHTTP(w http.ResponseWriter,r *http.Request){
 		req:= &model.CreateTODORequest{}
 		if err:=json.NewDecoder(r.Body).Decode(req);
 		err!=nil{
-			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
+			log.Println("NG")
 			return
 		}
 		if len(req.Subject)==0{
 			w.WriteHeader(http.StatusBadRequest)
+			log.Println("NG")
 			return
 		}
 		res,err:= h.Create(r.Context(), req)
 		if err!=nil{
 			w.WriteHeader(http.StatusInternalServerError)
+			log.Println("NG")
 			return
 		}
 		w.Header().Set("Content-Type","application/json")
 		w.WriteHeader(http.StatusOK)
+		log.Println("OK")
 		if err:=json.NewEncoder(w).Encode(res);
 		err!=nil{
 			w.WriteHeader(http.StatusInternalServerError)
+			log.Println("NG")
 			return
 		}
 
