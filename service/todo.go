@@ -157,5 +157,5 @@ func (s *TODOService) DeleteTODO(ctx context.Context, ids []int64) error {
 		return &model.ErrNotFound{}
 	}
 
-	return err
+	return nil
 }
