@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/TechBowl-japan/go-stations/model"
 	"github.com/TechBowl-japan/go-stations/service"
@@ -96,6 +97,37 @@ func(h *TODOHandler) ServeHTTP(w http.ResponseWriter,r *http.Request){
 		w.Header().Set("Content-Type","application/json")
 		if err:=json.NewEncoder(w).Encode(res);
 		err!=nil{
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+	case "GET":
+		req:=&model.ReadTODORequest{PrevID:0,Size:5}
+		prevID:=r.URL.Query().Get("prev_id")
+		size:=r.URL.Query().Get("size")
+		var err error
+		if prevID!=""{
+			req.PrevID,err=strconv.ParseInt(prevID,10,64)
+		}
+		if err!=nil{
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		if size!=""{
+			req.Size,err=strconv.ParseInt(size,10,64)
+		}
+		if err!=nil{
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		res,err:=h.Read(r.Context(),req)
+		if err!=nil{
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-type","application/json")
+		if err:=json.NewEncoder(w).Encode(res);err!=nil{
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
