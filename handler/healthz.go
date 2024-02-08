@@ -28,6 +28,8 @@ func (h *HealthzHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		log.Println(err)
+	}else{
+		log.Println("OK")
 	}
 
 }
