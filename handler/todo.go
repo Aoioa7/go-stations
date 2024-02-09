@@ -56,18 +56,18 @@ func(h *TODOHandler) ServeHTTP(w http.ResponseWriter,r *http.Request){
 		if err:=json.NewDecoder(r.Body).Decode(req);
 		err!=nil{
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println("NG")
+			log.Println("NG1",err)
 			return
 		}
 		if len(req.Subject)==0{
 			w.WriteHeader(http.StatusBadRequest)
-			log.Println("NG")
+			log.Println("NG2")
 			return
 		}
 		res,err:= h.Create(r.Context(), req)
 		if err!=nil{
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println("NG")
+			log.Println("NG3",err)
 			return
 		}
 		w.Header().Set("Content-Type","application/json")
@@ -76,7 +76,7 @@ func(h *TODOHandler) ServeHTTP(w http.ResponseWriter,r *http.Request){
 		if err:=json.NewEncoder(w).Encode(res);
 		err!=nil{
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println("NG")
+			log.Println("NG4",err)
 			return
 		}
 
