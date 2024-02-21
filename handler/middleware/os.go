@@ -18,6 +18,7 @@ func OSName(h http.Handler) http.Handler{
 		ua:=r.UserAgent()
 		os:=useragent.Parse(ua).OS
 		ctx:=context.WithValue(r.Context(),osKey,os)
+		//ターミナルからcurlコマンドでAPIを叩いた時と、リンクを開いてwabブラウザからAPIを叩くときではHTTPリクエストヘッダに含まれるUserAgentが異なる
 		fmt.Println(ua,os)
 		
 		h.ServeHTTP(w,r.WithContext(ctx))

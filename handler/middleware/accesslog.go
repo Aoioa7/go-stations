@@ -1,9 +1,13 @@
 package middleware
 
 import (
-	"fmt"
+	"context"
+	"encoding/json"
+	_ "fmt"
 	"net/http"
 	"time"
+
+	"github.com/mileusna/useragent"
 )
 
 type AccessLog struct{
@@ -14,18 +18,25 @@ type AccessLog struct{
 }
 
 func AccessLogger(h http.Handler) http.Handler{
+
 	fn:=func(w http.ResponseWriter,r *http.Request){
 
 		accessTime:=time.Now()
-		thisPath:= r.URL.Path
-		osKey:="os"
+		thisPath:=r.URL.Path
 		thisOS:="none"
+		osKey:="os"
 
+		//OSのkeyとvalueの準備
+		ua:=r.UserAgent()
+		os:=useragent.Parse(ua).OS
+		ctx:=context.WithValue(r.Context(),osKey,os)
+		
+		//ここのハンドラーでsleepする、でないと時間差が丸められて0になる
 		h.ServeHTTP(w,r)
 
 		defer func(){
 			//os
-			if osValue,ok :=r.Context().Value(osKey).(string);ok{
+			if osValue,ok :=r.WithContext(ctx).Context().Value(osKey).(string);ok{
 				thisOS=osValue
 			}
 			
@@ -37,7 +48,10 @@ func AccessLogger(h http.Handler) http.Handler{
 				Path:thisPath,
 				OS:thisOS,
 			}
-			fmt.Printf("%+v\n",accessLog)
+			//あとはここをjsonで出力するだけ
+			//fmt.Printf("%+v\n",accessLog)
+			json.NewEncoder(w).Encode(accessLog)
+
 		}()
 	}
 	return http.HandlerFunc(fn)
