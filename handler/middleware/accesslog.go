@@ -2,8 +2,8 @@ package middleware
 
 import (
 	"context"
-	"encoding/json"
-	_ "fmt"
+	_ "encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -49,8 +49,8 @@ func AccessLogger(h http.Handler) http.Handler{
 				OS:thisOS,
 			}
 			//あとはここをjsonで出力するだけ
-			//fmt.Printf("%+v\n",accessLog)
-			json.NewEncoder(w).Encode(accessLog)
+			fmt.Printf("%+v\n",accessLog)
+			//json.NewEncoder(w).Encode(accessLog)
 
 		}()
 	}
