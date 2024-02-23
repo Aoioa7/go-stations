@@ -13,5 +13,5 @@ func NewLogHandler() *LogHandler {
 
 func (h *LogHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	//ここで2秒の休憩
-	time.Sleep(2 * time.Second)
+	time.Sleep(4 * time.Second)
 }

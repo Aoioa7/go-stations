@@ -49,8 +49,8 @@ func Basicauth(h http.Handler,realm string) http.Handler{
 		}
 		
 		//ここに辿り着けば認証クリア
-		defer h.ServeHTTP(w,r)
-		defer log.Println("authenticate!!!")
+		h.ServeHTTP(w,r)
+		log.Println("authenticate!!!")
 	}
 	return http.HandlerFunc(fn)
 }

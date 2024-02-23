@@ -32,8 +32,9 @@ func NewRouter(todoDB *sql.DB) *http.ServeMux {
 	//middlewareの呼び出しの順番と変数keyのスコープに注意する
 	logHandler:=handler.NewLogHandler()
 	mux.HandleFunc("/log",middleware.AccessLogger(logHandler).ServeHTTP)
+	
 	//Basic認証
-    authHandler:=handler.NewLogHandler()
+    authHandler:=handler.NewAuthHandler()
 	mux.HandleFunc("/auth",middleware.Basicauth(authHandler,"authTestArea").ServeHTTP)
 
 	return mux

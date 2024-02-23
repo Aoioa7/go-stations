@@ -1,9 +1,12 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"sync"
 	"time"
 
 	"github.com/TechBowl-japan/go-stations/db"
@@ -53,7 +56,41 @@ func realMain() error {
 	mux := router.NewRouter(todoDB)
 
 	// TODO: サーバーをlistenする
-	http.ListenAndServe(port, mux)
+	//http.ListenAndServe(port, mux)
 
+	//ここからgraceful shutdownの実装。まずはサーバーの準備。
+	srv:=&http.Server{
+		Addr:port,
+		Handler:mux,
+	}
+
+	//シグナルを通知する準備。
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill)
+	defer stop()
+
+	//ゴルーチンが終わるまでmain関数が終わらない。
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	go func() {
+		defer wg.Done()
+		<-ctx.Done()
+		ctx, cancel := context.WithTimeout(context.Background(), 8*time.Second)
+		defer cancel()
+		//シャットダウンを試みて、エラーハンドリング。
+		err := srv.Shutdown(ctx)
+		if err != nil {
+			log.Print("graceful shutdown失敗", err)
+		} else {
+			log.Print("graceful shutdown")
+		}
+	}()
+	//サーバーを立てて、エラーハンドリング。
+	err = srv.ListenAndServe()
+	if err != nil && err != http.ErrServerClosed {
+		return err
+	}
+
+	wg.Wait()
 	return nil
 }
